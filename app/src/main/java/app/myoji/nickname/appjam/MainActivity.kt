@@ -1,7 +1,12 @@
 package app.myoji.nickname.appjam
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_main.*
@@ -10,93 +15,38 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var adapter: ArrayAdapter<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val keywordList: List<String> = listOf(
-                "その数字には文字は設定されていません","apple", "banana", "cat", "dog"
-        )
+        adapter = ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1)
+        listView.adapter = adapter
 
-        var countNumber: Int = 0
-        var text: String = "その数字には文字は設定されていません"
-
-        textview1.text = "0"
-
-
-        plus_button.setOnClickListener{
-            countNumber += 1
-
-            try{
-                text = keywordList[countNumber]
-                listtext.text = text
-            }catch(e:Exception){
-                listtext.text = "その数字には文字は設定されていません"
-            }
-            if(countNumber == 0){
-                textview1.setTextColor(Color.WHITE)
-            }
-            else if(countNumber % 3 == 0 && countNumber % 5 == 0){
-                textview1.setTextColor(Color.RED)
-                image_11.isVisible = true
-            }
-
-            else if( countNumber % 3 == 0 ){
-                textview1.setTextColor(Color.GREEN)
-            }
-            else if(countNumber % 5 == 0){
-                textview1.setTextColor(Color.BLUE)
-            }
-            else{
-                textview1.setTextColor(Color.WHITE)
-                image_11.isVisible = false
-            }
-            textview1.text = countNumber.toString()
-
-
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+            val  adapter : ArrayAdapter<String> = listView.adapter as ArrayAdapter<String>
+            val item = adapter.getItem(position)
+            adapter.remove(item)
+            adapter.insert(item, 0)
         }
 
-        minus_button.setOnClickListener{
-            countNumber -= 1
-
-            try{
-                text = keywordList[countNumber]
-                listtext.text = text
-            }catch(e:Exception){
-                listtext.text = "その数字には文字は設定されていません"
-            }
-            if(countNumber == 0) {
-                textview1.setTextColor(Color.WHITE)
-            }
-            else if(countNumber % 3 == 0 && countNumber % 5 == 0){
-                textview1.setTextColor(Color.RED)
-                image_11.isVisible = true
-            }
-
-            else if( countNumber % 3 == 0 ){
-                textview1.setTextColor(Color.GREEN)
-            }
-            else if(countNumber % 5 == 0){
-                textview1.setTextColor(Color.BLUE)
-            }
-            else{
-                textview1.setTextColor(Color.WHITE)
-                image_11.isVisible = false
-            }
-            textview1.text = countNumber.toString()
+        listView.onItemLongClickListener = AdapterView.OnItemLongClickListener { parent: AdapterView<*>, view: View, position: Int, id: Long ->
+            val adapter = listView.adapter as ArrayAdapter<String>
+            val item = adapter.getItem(position)
+            adapter.remove(item)
+            Toast.makeText(this, "削除しました！",Toast.LENGTH_SHORT).show()
+            false
         }
+    }
 
-        clear_button.setOnClickListener{
-            countNumber = 0
-            try{
-                text = keywordList[countNumber]
-                listtext.text = text
-            }catch(e:Exception){
-                listtext.text = "その数字には文字は設定されていません"
-            }
-            textview1.setTextColor(Color.WHITE)
-            textview1.text = countNumber.toString()
-        }
+    fun add(view: View?){
+        val text : String = editText.text.toString()
+        Toast.makeText(this, "追加しました！",Toast.LENGTH_SHORT).show()
+        adapter.add(text)
+        editText.text = null
+        editText.text.toString()
+
     }
 
 }
